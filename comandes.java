@@ -89,11 +89,51 @@ public class comandes {
 
     public static void afegirProductes() {
         
+        String mes = "s";
+
+        while (mes.equalsIgnoreCase("s")) {
+            System.out.print("Introdueix el producte: ");
+            String producte = esc.nextLine();
+
+            System.out.println("Introdueix el preu del producte:");
+            double preu = llegirDouble();
+
+            System.out.println("Introdueix la quantitat que vols comprar:");
+            int quantitat = llegirInt();
+
+            double subtotal = preu * quantitat;
+
+            comanda = comanda + producte + "\t" + quantitat + "\t" + preu + " €\t" + subtotal + " €\n";
+
+            System.out.println("Vols afegir més productes? (s/n):");
+            mes = esc.nextLine();
+        }
+
     }
     public static void mostrarTiquet() {
         
     }
     public static void sortir() {
 
-    } 
+    }
+    public static int llegirInt() {
+        while (true) {
+            try {
+                String entrada = esc.nextLine();
+                return Integer.parseInt(entrada);
+            } catch (NumberFormatException e) {
+                System.out.print("Entrada no vàlida. Si us plau, introdueix un nombre enter: ");
+            }
+        }
+    }
+    public static double llegirDouble() {
+        while (true) {
+            try {
+                String entrada = esc.nextLine();
+                return Double.parseDouble(entrada);
+            } catch (NumberFormatException e) {
+                System.out.print("Entrada no vàlida. Si us plau, introdueix un nombre decimal: ");
+            }
+        }
+    }
 }
