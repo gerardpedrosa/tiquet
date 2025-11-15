@@ -1,5 +1,4 @@
 import java.util.Scanner;
-import java.util.*;
 
 public class comandes {
 
@@ -21,6 +20,7 @@ public class comandes {
         comandes programa = new comandes();
         programa.inici();
     }
+
     public void inici() {
         int opcio;
     
@@ -133,50 +133,66 @@ public class comandes {
         
         comandaExistent();
 
-        System.out.println("=============== TIQUET ===============");
+        System.out.println("===========================TIQUET==========================");
         System.out.println("Client: " + nomClient + "\n");
         System.out.println("Producte"+ "\t" + "Quantitat" + "\t" + "Preu unit." + "\t" +   "Subtotal");
-        System.out.println("--------------------------------------------------");
+        System.out.println("-----------------------------------------------------------");
         System.out.println(comanda);
-        System.out.println("--------------------------------------------------");
+        System.out.println("-----------------------------------------------------------");
 
         double iva = total * 0.10;
         double totalAmbIva = total + iva;
 
-        System.out.println("Total sense IVA:                         " + subtotal + " $");
-        System.out.println("IVA (10%):                               " + iva + " $");
-        System.out.println("TOTAL A PAGAR:                          " + totalAmbIva + " $");
-        System.out.println("==================================================");
+        System.out.println(alinearFinal("Total sense IVA:", total));
+        System.out.println(alinearFinal("IVA (10%):", iva));
+        System.out.println(alinearFinal("TOTAL A PAGAR:", totalAmbIva));
+        System.out.println("===========================================================");
     }
 
     public String alinear(String producte, int quantitat, double preu, double subtotal) {
-        
-        String linea = "";
+    StringBuilder linea = new StringBuilder();
 
         for (int i = 0; i < 64; i++) {
 
             if (i == 0) {
-            linea = linea + producte;
-            i += producte.length() - 1;
+                linea.append(producte);
+                i += producte.length() - 1;
+            }
+            else if (i == 16) {
+                String q = "" + quantitat;
+                linea.append(q);
+                i += q.length() - 1;
+            }
+            else if (i == 32) {
+                String p = String.format("%.2f $", preu);
+                linea.append(p);
+                i += p.length() - 1;
+            }
+            else if (i == 48) {
+                String s = String.format("%.2f $", subtotal);
+                linea.append(s);
+                i += s.length() - 1;
+            }
+            else {
+                linea.append(" ");
+            }   
         }
-        else if (i == 16) {
-            String q = "" + quantitat;
-            linea = linea + q;
-            i += q.length() - 1;
-        }
-        else if (i == 32) {
-            String p = String.format("%.2f $", preu);
-            linea = linea + p;
-            i += p.length() - 1;
-        }
-        else if (i == 48) {
-            String s = String.format("%.2f $", subtotal);
-            linea = linea + s;
-            i += s.length() - 1;
-        }
-        else {
-            linea = linea + " ";
-        }
+        return linea.toString();
+    }
+
+    public String alinearFinal(String text, double valor) {
+        String linea = "";
+        String valorFormateado = String.format("%.2f $", valor);
+    
+        for (int i = 0; i < 64; i++) {
+            if (i == 48) {
+                linea = linea + valorFormateado;
+                i = i + valorFormateado.length() - 1;
+            } else if (i < text.length()) {
+                linea = linea + text.charAt(i);
+            } else {
+                linea = linea + " ";
+            }
         }
         return linea;
     }
