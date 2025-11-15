@@ -5,44 +5,55 @@ public class comandes {
 
     //variables
 
-    static String nomClient = "";
-    static String comanda = "";
-    static double total = 0.0;
-    static boolean hiHaComanda = false;
+    String nomClient = "";
+    String comanda = "";
+    double total = 0.0;
+    boolean hiHaComanda = false;
+    String producte = "";
+    int quantitat = 0;
+    double preu = 0.0;
+
+    double subtotal = 0.0;
 
     //scanner
-    static Scanner esc = new Scanner(System.in);
+    Scanner esc = new Scanner(System.in);
     public static void main(String[] args) {
-        
+        comandes programa = new comandes();
+        programa.inici();
+    }
+    public void inici() {
         int opcio;
-
+    
         do {
             mostrarMenu();
             opcio = llegirInt();
+
 
             switch (opcio) {
                 case 1: {
                     novaComanda();
                 }
+                break;
                 case 2: {
                     actualitzarComanda();
                 }
+                break;
                 case 3: {
                     veureTiquet();
                 }
+                break;
                 case 4:{
                     sortir();
                 }
-                 
+                break; 
                 default: {
                     System.out.println("Opció no vàlida");
                 }
-                
             }
             
         } while (opcio != 4);  
     }
-    public static void mostrarMenu() {
+    public void mostrarMenu() {
 
         System.out.println("\n----- GESTIÓ COMANDES RESTAURANT -----");
         System.out.println("1. Crear nova comanda");
@@ -50,7 +61,7 @@ public class comandes {
         System.out.println("3. Visualitzar últim tiquet");
         System.out.println("4. Sortir");
     }
-    public static void novaComanda() {
+    public void novaComanda() {
 
         System.out.println("\n----- NOVA COMANDA -----");
         System.out.print("\nIntrodueix el nom del client:");
@@ -59,41 +70,44 @@ public class comandes {
         total = 0;
         afegirProductes();
         hiHaComanda = true;
-        System.out.println("\nEstem generant el tiquet…");
+        System.out.println("\nEstem generant el tiquet ...");
         mostrarTiquet();
         System.out.println("\nComanda enregistrada correctament.");
-
+        
     }
-    public static void comandaExistent() {
+    public boolean comandaExistent() {
         
         if (!hiHaComanda) {
             System.out.println("No hi ha cap comanda");
-            return;
+            return false;
         }
+        return true;
+
     }
-    public static void veureTiquet() {
+    public void veureTiquet() {
+
         comandaExistent();
         System.out.println("--------------- ÚLTIM TIQUET ---------------");
         mostrarTiquet();
     }
-    public static void actualitzarComanda() {
+    public void actualitzarComanda() {
         
         comandaExistent();
 
-        System.out.print("\nIntrodueix un nou producte: ");
+        System.out.println("\n----- ACTUALITZAR COMANDA -----");
         afegirProductes();
         System.out.println("\nS'està actualitzant la comanda…");
         mostrarTiquet();
         System.out.println("\nComanda actualitzada");
     }
 
-    public static void afegirProductes() {
+    public void afegirProductes() {
         
         String mes = "s";
 
         while (mes.equalsIgnoreCase("s")) {
             System.out.print("Introdueix el producte: ");
-            String producte = esc.nextLine();
+            producte = esc.nextLine();
 
             System.out.println("Introdueix el preu del producte:");
             double preu = llegirDouble();
@@ -101,39 +115,101 @@ public class comandes {
             System.out.println("Introdueix la quantitat que vols comprar:");
             int quantitat = llegirInt();
 
-            double subtotal = preu * quantitat;
+            subtotal = preu * quantitat;
+            total = total + subtotal;
 
-            comanda = comanda + producte + "\t" + quantitat + "\t" + preu + " €\t" + subtotal + " €\n";
+            comanda = comanda + alinear(producte, quantitat, preu, subtotal) + "\n";
+            subtotal = Math.round(subtotal * 100.0) / 100.0;
+            preu = Math.round(preu * 100.0) / 100.0;
 
             System.out.println("Vols afegir més productes? (s/n):");
             mes = esc.nextLine();
+            
         }
 
     }
-    public static void mostrarTiquet() {
+    
+    public void mostrarTiquet() {
         
+        comandaExistent();
+
+        System.out.println("=============== TIQUET ===============");
+        System.out.println("Client: " + nomClient + "\n");
+        System.out.println("Producte"+ "\t" + "Quantitat" + "\t" + "Preu unit." + "\t" +   "Subtotal");
+        System.out.println("--------------------------------------------------");
+        System.out.println(comanda);
+        System.out.println("--------------------------------------------------");
+
+        double iva = total * 0.10;
+        double totalAmbIva = total + iva;
+
+        System.out.println("Total sense IVA:                         " + subtotal + " $");
+        System.out.println("IVA (10%):                               " + iva + " $");
+        System.out.println("TOTAL A PAGAR:                          " + totalAmbIva + " $");
+        System.out.println("==================================================");
     }
-    public static void sortir() {
+
+    public String alinear(String producte, int quantitat, double preu, double subtotal) {
+        
+        String linea = "";
+
+        for (int i = 0; i < 64; i++) {
+
+            if (i == 0) {
+            linea = linea + producte;
+            i += producte.length() - 1;
+        }
+        else if (i == 16) {
+            String q = "" + quantitat;
+            linea = linea + q;
+            i += q.length() - 1;
+        }
+        else if (i == 32) {
+            String p = String.format("%.2f $", preu);
+            linea = linea + p;
+            i += p.length() - 1;
+        }
+        else if (i == 48) {
+            String s = String.format("%.2f $", subtotal);
+            linea = linea + s;
+            i += s.length() - 1;
+        }
+        else {
+            linea = linea + " ";
+        }
+        }
+        return linea;
+    }
+    public void sortir() {
+    
+        System.out.println("Sortint del programa. Fins aviat!");
 
     }
-    public static int llegirInt() {
-        while (true) {
-            try {
-                String entrada = esc.nextLine();
-                return Integer.parseInt(entrada);
-            } catch (NumberFormatException e) {
-                System.out.print("Entrada no vàlida. Si us plau, introdueix un nombre enter: ");
-            }
+    public int llegirInt() {
+    int valor = 0;
+
+        if (esc.hasNextInt()) {
+
+            valor = esc.nextInt();
+        } 
+        else {
+            System.out.print("Entrada no vàlida. Introdueix un enter: ");
+            esc.next();
+            valor = llegirInt();
         }
-    }
-    public static double llegirDouble() {
-        while (true) {
-            try {
-                String entrada = esc.nextLine();
-                return Double.parseDouble(entrada);
-            } catch (NumberFormatException e) {
-                System.out.print("Entrada no vàlida. Si us plau, introdueix un nombre decimal: ");
-            }
+
+    esc.nextLine();
+    return valor;
+}
+    public double llegirDouble() {
+    
+        String entrada = esc.nextLine().replace(",", ".");
+        try {
+            return Double.parseDouble(entrada);
+        } 
+        catch (NumberFormatException e) {
+            System.out.print("Entrada no vàlida. Introdueix un decimal: ");
+            return llegirDouble();
         }
     }
 }
